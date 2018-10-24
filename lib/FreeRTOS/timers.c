@@ -1066,7 +1066,9 @@ Timer_t * const pxTimer = ( Timer_t * ) xTimer;
 
 #endif /* configUSE_TRACE_FACILITY */
 /*-----------------------------------------------------------*/
-
+#ifdef FREERTOS_MODULE_TEST
+	#include "timers_test_access_functions.h"
+#endif
 /* This entire source file will be skipped if the application is not configured
 to include software timer functionality.  If you want to include software timer
 functionality then ensure configUSE_TIMERS is set to 1 in FreeRTOSConfig.h. */
