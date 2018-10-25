@@ -153,18 +153,27 @@ only for ports that are using the MPU. */
 		#define xStreamBufferGenericCreate				MPU_xStreamBufferGenericCreate
 		#define xStreamBufferGenericCreateStatic		MPU_xStreamBufferGenericCreateStatic
 
+		/* user defined mpu function */
+		#define NVIC_Init						MPU_NVIC_Init
+		#define SystemReset						MPU_SystemReset
+		#define BBRAM_Init 						MPU_BBRAM_Init
+		#define BBRAM_Lock 						MPU_BBRAM_Lock
+		#define BBRAM_Unlock 					MPU_BBRAM_Unlock
+
 
 		/* Remove the privileged function macro, but keep the PRIVILEGED_DATA
 		macro so applications can place data in privileged access sections
 		(useful when using statically allocated objects). */
 		#define PRIVILEGED_FUNCTION
-		#define PRIVILEGED_DATA __attribute__((section("privileged_data")))
+		//#define PRIVILEGED_DATA __attribute__((section("privileged_data")))
 
 	#else /* MPU_WRAPPERS_INCLUDED_FROM_API_FILE */
 
 		/* Ensure API functions go in the privileged execution section. */
-		#define PRIVILEGED_FUNCTION __attribute__((section("privileged_functions")))
-		#define PRIVILEGED_DATA __attribute__((section("privileged_data")))
+		//#define PRIVILEGED_FUNCTION __attribute__((section("privileged_functions")))
+		//#define PRIVILEGED_DATA __attribute__((section("privileged_data")))
+		#define PRIVILEGED_FUNCTION
+		#define PRIVILEGED_DATA
 
 	#endif /* MPU_WRAPPERS_INCLUDED_FROM_API_FILE */
 

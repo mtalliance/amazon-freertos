@@ -136,6 +136,7 @@ BaseType_t xRunningPrivileged = xPortRaisePrivilege();
 		vPortResetPrivilege( xRunningPrivileged );
 	}
 #endif
+
 /*-----------------------------------------------------------*/
 
 #if ( INCLUDE_xTaskAbortDelay == 1 )

@@ -1,4 +1,4 @@
-cmake_minimum_required(3.8)
+cmake_minimum_required (VERSION 3.8)
 
 project(FreeRTOS)
 
@@ -10,10 +10,12 @@ set(FreeRTOS_SRC
         tasks.c
         timers.c
         portable/Common/mpu_wrappers.c
+        portable/GCC/ARM_CM4F_MPU/port.c
         )
 
-add_library(${PROJECT_NAME} FreeRTOS_SRC)
-set(COMMON_COMPILE_FLAGS "-fno-strict-aliasing -Wall -Wextra -Wfloat-equal")
+add_library(${PROJECT_NAME} ${FreeRTOS_SRC})
+
+set(COMMON_COMPILE_FLAGS "-DUSE_MPU -DCORTEX_M4 -DSTM32F427X -DSTM32F4XX -fno-strict-aliasing -Wall -Wextra -Wfloat-equal")
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(COMMON_COMPILE_FLAGS "${COMMON_COMPILE_FLAGS} -ffloat-store")
 endif()
@@ -31,6 +33,7 @@ set_target_properties(
 )
 
 target_include_directories( ${PROJECT_NAME}
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}../include
-        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}../include/private
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include/private
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/portable/GCC/ARM_CM4F_MPU
         )
