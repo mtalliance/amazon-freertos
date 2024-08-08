@@ -99,16 +99,24 @@ typedef unsigned long UBaseType_t;
 	#define portFORCE_INLINE inline __attribute__(( always_inline))
 #endif
 
-portFORCE_INLINE static void vPortResetPrivilege( BaseType_t xRunningPrivileged )
-{
-	if( xRunningPrivileged != pdTRUE )
-	{
-		__asm volatile ( " mrs r0, control 	\n" \
-						 " orr r0, #1 		\n" \
-						 " msr control, r0	\n"	\
-						 :::"r0", "memory" );
-	}
-}
+/*****************************************************************************/
+
+extern BaseType_t xIsPrivileged( void );
+extern void vResetPrivilege( void );
+
+/**
+ * @brief Checks whether or not the processor is privileged.
+ *
+ * @return 1 if the processor is already privileged, 0 otherwise.
+ */
+#define portIS_PRIVILEGED()			xIsPrivileged()
+
+
+/**
+ * @brief Lowers the privilege level by setting the bit 0 of the CONTROL
+ * register.
+ */
+#define portRESET_PRIVILEGE()		vResetPrivilege()
 
 
 #if( configUSE_16_BIT_TICKS == 1 )
@@ -144,13 +152,12 @@ portFORCE_INLINE static void vPortResetPrivilege( BaseType_t xRunningPrivileged 
 
 
 
-
-
-
-
-
 /* MPU specific constants. */
+#ifdef USE_MPU
 #define portUSING_MPU_WRAPPERS		1
+#else
+#define portUSING_MPU_WRAPPERS		0
+#endif
 #define portPRIVILEGE_BIT			( 0x80000000UL )
 
 // Access permission defines
@@ -272,7 +279,7 @@ typedef struct MPU_SETTINGS
 		:::"r0"								\
 	)
 
-
+#define portMEMORY_BARRIER() __asm volatile( "" ::: "memory" )
 
 /* FAQ:  Setting BASEPRI to 0 is not a bug.  Please see
 http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html before disagreeing. */
@@ -305,6 +312,7 @@ extern UBaseType_t vPortIsCritical ( void );
 //#define MPU_BBRAM_REGION_USER_RW  (void *)0x40024000UL, 4096, portMPU_AP_REGION_P_RW_U_RW
 
 #define BBRAM_REGION_USER_RW
+
 
 #ifdef __cplusplus
 }
