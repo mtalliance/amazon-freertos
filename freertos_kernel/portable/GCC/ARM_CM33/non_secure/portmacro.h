@@ -280,7 +280,7 @@ typedef struct MPU_SETTINGS
 	 */
 	#define portRESET_PRIVILEGE()								vResetPrivilege()
 #else
-	#define portIS_PRIVILEGED()
+	#define portIS_PRIVILEGED()    pdTRUE
 	#define portRAISE_PRIVILEGE()
 	#define portRESET_PRIVILEGE()
 #endif /* configENABLE_MPU */

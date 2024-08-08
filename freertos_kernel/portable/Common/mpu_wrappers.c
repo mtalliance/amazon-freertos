@@ -89,10 +89,21 @@ void vPortResetPrivilege( BaseType_t xRunningPrivileged )
 #if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
 	BaseType_t MPU_xTaskCreateRestricted( const TaskParameters_t * const pxTaskDefinition, TaskHandle_t *pxCreatedTask ) /* FREERTOS_SYSTEM_CALL */
 	{
-	BaseType_t xReturn;
-	BaseType_t xRunningPrivileged = xPortRaisePrivilege();
+		BaseType_t xReturn;
+		BaseType_t xRunningPrivileged = xPortRaisePrivilege();
+
+		#define portMPU_CTRL ( ( volatile uint32_t * ) 0xe000ed94 )
+		__asm volatile ("dmb");
+		uint32_t currentMPUConfiguration = *portMPU_CTRL;
+		// Disable the MPU if enabled
+		*portMPU_CTRL &= ~0x01;
 
 		xReturn = xTaskCreateRestricted( pxTaskDefinition, pxCreatedTask );
+
+		// Restore previous configuration
+		*portMPU_CTRL = currentMPUConfiguration;
+		__asm volatile ("dsb");
+		__asm volatile ("isb");
 		vPortResetPrivilege( xRunningPrivileged );
 		return xReturn;
 	}
