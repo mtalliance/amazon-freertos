@@ -298,9 +298,9 @@ void vPortEnterCritical( void ) PRIVILEGED_FUNCTION;
 void vPortExitCritical( void ) PRIVILEGED_FUNCTION;
 
 /**
- * @brief SysTick handler.
+ * @brief Port specific SysTick handler (renamed from original name).
  */
-void SysTick_Handler( void ) PRIVILEGED_FUNCTION;
+void xPortSysTickHandler( void ) PRIVILEGED_FUNCTION;
 
 /**
  * @brief C part of SVC handler.
@@ -506,7 +506,8 @@ void vPortExitCritical( void ) /* PRIVILEGED_FUNCTION */
 }
 /*-----------------------------------------------------------*/
 
-void SysTick_Handler( void ) /* PRIVILEGED_FUNCTION */
+// Function renamed to remain compatible with previous versions (< 10.2.1) of FreeRTOS
+void xPortSysTickHandler( void ) /* PRIVILEGED_FUNCTION */
 {
 uint32_t ulPreviousMask;
 
