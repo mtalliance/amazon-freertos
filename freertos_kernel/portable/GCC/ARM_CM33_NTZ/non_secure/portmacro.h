@@ -107,6 +107,7 @@ extern void vPortYield( void ) /* PRIVILEGED_FUNCTION */;
 
 extern void vPortEnterCritical( void ) /* PRIVILEGED_FUNCTION */;
 extern void vPortExitCritical( void ) /* PRIVILEGED_FUNCTION */;
+extern UBaseType_t vPortIsCritical ( void );
 
 extern uint32_t ulSetInterruptMaskFromISR( void ) /* __attribute__(( naked )) PRIVILEGED_FUNCTION */;
 extern void vClearInterruptMaskFromISR( uint32_t ulMask ) /* __attribute__(( naked )) PRIVILEGED_FUNCTION */;
@@ -223,6 +224,7 @@ typedef struct MPU_SETTINGS
 #define portENABLE_INTERRUPTS()								__asm volatile ( " cpsie i " ::: "memory" )
 #define portENTER_CRITICAL()								vPortEnterCritical()
 #define portEXIT_CRITICAL()									vPortExitCritical()
+#define portIS_CRITICAL()			vPortIsCritical()
 /*-----------------------------------------------------------*/
 
 /**

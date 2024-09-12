@@ -63,6 +63,6 @@ endif()
 
 if(USE_STM32H5_SUPPORT)
     target_include_directories( ${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/portable/GCC/ARM_CM33/non_secure
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/portable/GCC/ARM_CM33_NTZ/non_secure
     )
 endif()

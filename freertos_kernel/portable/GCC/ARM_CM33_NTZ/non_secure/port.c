@@ -505,6 +505,12 @@ void vPortExitCritical( void ) /* PRIVILEGED_FUNCTION */
 	}
 }
 /*-----------------------------------------------------------*/
+UBaseType_t vPortIsCritical ( void )
+{
+	return ulCriticalNesting;
+}
+/*-----------------------------------------------------------*/
+
 
 // Function renamed to remain compatible with previous versions (< 10.2.1) of FreeRTOS
 void xPortSysTickHandler( void ) /* PRIVILEGED_FUNCTION */
