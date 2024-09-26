@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.18)
 
 project(FreeRTOS)
 
@@ -24,22 +24,86 @@ set(FreeRTOS_SRC
         >
         )
 
-add_library(${PROJECT_NAME} ${FreeRTOS_SRC})
+add_library(${PROJECT_NAME} OBJECT ${FreeRTOS_SRC})
 
 if(USE_STM32F4_SUPPORT)
-    set(COMMON_COMPILE_FLAGS "-DUSE_MPU -DCORTEX_M4 -DSTM32F427X -DSTM32F4XX -fno-strict-aliasing -Wall -Wextra -Wfloat-equal")
-    set(COMMON_COMPILE_FLAGS_CORTEX "${COMMON_COMPILE_FLAGS} -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsigned-char -ffunction-sections -fdata-sections -fno-common -fno-omit-frame-pointer")
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        -mcpu=cortex-m4
+        -mthumb
+        -mfloat-abi=hard
+        -mfpu=fpv4-sp-d16
+    )
+    target_link_options(${PROJECT_NAME} PRIVATE
+        -mcpu=cortex-m4
+        -mthumb
+        -mfloat-abi=hard
+        -mfpu=fpv4-sp-d16
+    )
 elseif (USE_STM32H5_SUPPORT)
-    set(COMMON_COMPILE_FLAGS "-DCORTEX_M33 -DSTM32H563X -DSTM32H5XX -fno-strict-aliasing -Wall -Wextra -Wfloat-equal")
-    set(COMMON_COMPILE_FLAGS_CORTEX "${COMMON_COMPILE_FLAGS} -mcpu=cortex-m33 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16 -fsigned-char -ffunction-sections -fdata-sections -fno-common -fno-omit-frame-pointer")
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        -mcpu=cortex-m33
+        -mthumb
+        -mfloat-abi=hard
+        -mfpu=fpv5-sp-d16
+    )
+    target_link_options(${PROJECT_NAME} PRIVATE
+        -mcpu=cortex-m33
+        -mthumb
+        -mfloat-abi=hard
+        -mfpu=fpv5-sp-d16
+    )
 endif()
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+        $<$<CONFIG:Release>:RELEASE>
+        $<$<CONFIG:Debug>:DEBUG>
+)
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(COMMON_COMPILE_FLAGS "${COMMON_COMPILE_FLAGS} -ffloat-store")
-endif()
-set(CMAKE_C_FLAGS_DEBUG 	"-DDEBUG ${COMMON_COMPILE_FLAGS_CORTEX} -O0 -g")
-set(CMAKE_C_FLAGS_RELEASE 	"-DRELEASE ${COMMON_COMPILE_FLAGS_CORTEX} -Os -Werror")
+target_compile_options(${PROJECT_NAME} PRIVATE 
+        $<$<CONFIG:Debug>:
+                -O0
+                -g
+        >
+        $<$<CONFIG:Release>:
+                -Os
+                -Werror
+        >
+        $<$<STREQUAL:${CMAKE_CXX_COMPILER_ID},GNU>:
+                -ffloat-store
+        >
+        -fsigned-char
+        -ffunction-sections
+        -fdata-sections
+        -fno-common
+        -fno-omit-frame-pointer
+        -fno-strict-aliasing
+        -Wall
+        -Wextra
+        -Wfloat-equal
+)
+
+target_link_options(${PROJECT_NAME} PRIVATE 
+        $<$<CONFIG:Debug>:
+                -O0
+                -g
+        >
+        $<$<CONFIG:Release>:
+                -Os
+                -Werror
+        >
+        $<$<STREQUAL:${CMAKE_CXX_COMPILER_ID},GNU>:
+                -ffloat-store
+        >
+        -fsigned-char
+        -ffunction-sections
+        -fdata-sections
+        -fno-common
+        -fno-omit-frame-pointer
+        -fno-strict-aliasing
+        -Wall
+        -Wextra
+        -Wfloat-equal
+)
 
 set_target_properties(
         ${PROJECT_NAME} PROPERTIES
