@@ -27,26 +27,14 @@ set(FreeRTOS_SRC
 add_library(${PROJECT_NAME} OBJECT ${FreeRTOS_SRC})
 
 if(USE_STM32F4_SUPPORT)
-    target_compile_options(${PROJECT_NAME} PRIVATE
-        -mcpu=cortex-m4
-        -mthumb
-        -mfloat-abi=hard
-        -mfpu=fpv4-sp-d16
-    )
-    target_link_options(${PROJECT_NAME} PRIVATE
+    set(TARGET_SPECIFIC_FLAGS
         -mcpu=cortex-m4
         -mthumb
         -mfloat-abi=hard
         -mfpu=fpv4-sp-d16
     )
 elseif (USE_STM32H5_SUPPORT)
-    target_compile_options(${PROJECT_NAME} PRIVATE
-        -mcpu=cortex-m33
-        -mthumb
-        -mfloat-abi=hard
-        -mfpu=fpv5-sp-d16
-    )
-    target_link_options(${PROJECT_NAME} PRIVATE
+    set(TARGET_SPECIFIC_FLAGS
         -mcpu=cortex-m33
         -mthumb
         -mfloat-abi=hard
@@ -59,13 +47,11 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
         $<$<CONFIG:Debug>:DEBUG>
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE 
+set(COMMON_FLAGS
         $<$<CONFIG:Debug>:
-                -O0
                 -g
         >
         $<$<CONFIG:Release>:
-                -Os
                 -Werror
         >
         $<$<STREQUAL:${CMAKE_CXX_COMPILER_ID},GNU>:
@@ -82,27 +68,14 @@ target_compile_options(${PROJECT_NAME} PRIVATE
         -Wfloat-equal
 )
 
+target_compile_options(${PROJECT_NAME} PRIVATE 
+    ${TARGET_SPECIFIC_FLAGS}
+    ${COMMON_FLAGS}    
+)
+
 target_link_options(${PROJECT_NAME} PRIVATE 
-        $<$<CONFIG:Debug>:
-                -O0
-                -g
-        >
-        $<$<CONFIG:Release>:
-                -Os
-                -Werror
-        >
-        $<$<STREQUAL:${CMAKE_CXX_COMPILER_ID},GNU>:
-                -ffloat-store
-        >
-        -fsigned-char
-        -ffunction-sections
-        -fdata-sections
-        -fno-common
-        -fno-omit-frame-pointer
-        -fno-strict-aliasing
-        -Wall
-        -Wextra
-        -Wfloat-equal
+    ${TARGET_SPECIFIC_FLAGS}
+    ${COMMON_FLAGS}
 )
 
 set_target_properties(
