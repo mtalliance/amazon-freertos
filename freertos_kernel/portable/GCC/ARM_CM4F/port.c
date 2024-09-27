@@ -426,6 +426,14 @@ void vPortExitCritical( void )
 		portENABLE_INTERRUPTS();
 	}
 }
+
+/*-----------------------------------------------------------*/
+
+UBaseType_t vPortIsCritical( void )
+{
+	return uxCriticalNesting;
+}
+
 /*-----------------------------------------------------------*/
 
 void xPortPendSVHandler( void )

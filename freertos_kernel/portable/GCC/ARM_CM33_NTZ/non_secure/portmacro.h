@@ -224,7 +224,7 @@ typedef struct MPU_SETTINGS
 #define portENABLE_INTERRUPTS()								__asm volatile ( " cpsie i " ::: "memory" )
 #define portENTER_CRITICAL()								vPortEnterCritical()
 #define portEXIT_CRITICAL()									vPortExitCritical()
-#define portIS_CRITICAL()			vPortIsCritical()
+#define portIS_CRITICAL()			                        vPortIsCritical()
 /*-----------------------------------------------------------*/
 
 /**

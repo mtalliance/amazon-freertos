@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.18)
 
+option(USE_MPU  "Activate MPU support"  ON )
+
 project(FreeRTOS)
 
 set(FreeRTOS_SRC
@@ -11,16 +13,20 @@ set(FreeRTOS_SRC
         timers.c
 
         $<$<BOOL:${USE_STM32F4_SUPPORT}>:
-        portable/GCC/ARM_CM4F_MPU/port.c
-        # Add the MPU wrappers to common files once MPU is implemented
-        portable/Common/mpu_wrappers.c>
+            $<IF:$<BOOL:${USE_MPU}>,
+                portable/GCC/ARM_CM4F_MPU/port.c
+                portable/Common/mpu_wrappers.c
+            ,
+                portable/GCC/ARM_CM4F/port.c
+            >
+        >
 
         $<$<BOOL:${USE_STM32H5_SUPPORT}>:
-        portable/GCC/ARM_CM33_NTZ/non_secure/port.c
-        portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c
+            portable/GCC/ARM_CM33_NTZ/non_secure/port.c
+            portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c
 
-        # Remove when integrating to RTU project
-        portable/MemMang/heap_4.c
+            # Remove when integrating to RTU project
+            portable/MemMang/heap_4.c
         >
         )
 
@@ -48,24 +54,24 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 )
 
 set(COMMON_FLAGS
-        $<$<CONFIG:Debug>:
-                -g
-        >
-        $<$<CONFIG:Release>:
-                -Werror
-        >
-        $<$<STREQUAL:${CMAKE_CXX_COMPILER_ID},GNU>:
-                -ffloat-store
-        >
-        -fsigned-char
-        -ffunction-sections
-        -fdata-sections
-        -fno-common
-        -fno-omit-frame-pointer
-        -fno-strict-aliasing
-        -Wall
-        -Wextra
-        -Wfloat-equal
+    $<$<CONFIG:Debug>:
+        -g
+    >
+    $<$<CONFIG:Release>:
+        -Werror
+    >
+    $<$<STREQUAL:${CMAKE_CXX_COMPILER_ID},GNU>:
+        -ffloat-store
+    >
+    -fsigned-char
+    -ffunction-sections
+    -fdata-sections
+    -fno-common
+    -fno-omit-frame-pointer
+    -fno-strict-aliasing
+    -Wall
+    -Wextra
+    -Wfloat-equal
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE 
@@ -73,7 +79,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     ${COMMON_FLAGS}    
 )
 
-target_link_options(${PROJECT_NAME} PRIVATE 
+target_link_options(${PROJECT_NAME} PRIVATE
     ${TARGET_SPECIFIC_FLAGS}
     ${COMMON_FLAGS}
 )
@@ -88,13 +94,16 @@ set_target_properties(
 )
 
 target_include_directories( ${PROJECT_NAME}
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-        )
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
 # Append include directories based on target MCU
 if(USE_STM32F4_SUPPORT)
     target_include_directories( ${PROJECT_NAME}
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/portable/GCC/ARM_CM4F_MPU
+    PUBLIC $<IF:$<BOOL:${USE_MPU}>,
+        ${CMAKE_CURRENT_SOURCE_DIR}/portable/GCC/ARM_CM4F_MPU,
+        ${CMAKE_CURRENT_SOURCE_DIR}/portable/GCC/ARM_CM4F
+    >
     )
 endif()
 

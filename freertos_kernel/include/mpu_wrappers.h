@@ -155,14 +155,6 @@ only for ports that are using the MPU. */
 		#define xStreamBufferGenericCreate				MPU_xStreamBufferGenericCreate
 		#define xStreamBufferGenericCreateStatic		MPU_xStreamBufferGenericCreateStatic
 
-
-		/* user defined mpu function */
-		#define NVIC_Init						MPU_NVIC_Init
-		#define SystemReset						MPU_SystemReset
-		#define BBRAM_Init 						MPU_BBRAM_Init
-		#define BBRAM_Lock 						MPU_BBRAM_Lock
-		#define BBRAM_Unlock 					MPU_BBRAM_Unlock
-
 		/* Remove the privileged function macro, but keep the PRIVILEGED_DATA
 		macro so applications can place data in privileged access sections
 		(useful when using statically allocated objects). */
@@ -190,6 +182,17 @@ only for ports that are using the MPU. */
 	#define portUSING_MPU_WRAPPERS 0
 
 #endif /* portUSING_MPU_WRAPPERS */
+
+/* User-defined MPU functions
+   These functions are defined in the privileged_functions.c file.
+   To maintain compatibility with the MPU, we preserve the function names and
+   their implementation will be target specific based on the USE_MPU define.
+*/
+#define NVIC_Init						MPU_NVIC_Init
+#define SystemReset						MPU_SystemReset
+#define BBRAM_Init 						MPU_BBRAM_Init
+#define BBRAM_Lock 						MPU_BBRAM_Lock
+#define BBRAM_Unlock 					MPU_BBRAM_Unlock
 
 
 #endif /* MPU_WRAPPERS_H */
