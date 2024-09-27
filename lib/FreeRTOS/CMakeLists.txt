@@ -20,22 +20,23 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
         $<$<CONFIG:Debug>:DEBUG>
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE 
+set(TARGET_SPECIFIC_FLAGS
+        -mcpu=cortex-m4
+        -mthumb
+        -mfloat-abi=hard
+        -mfpu=fpv4-sp-d16
+)
+
+set(COMMON_FLAGS
         $<$<CONFIG:Debug>:
-                -O0
                 -g
         >
         $<$<CONFIG:Release>:
-                -Os
                 -Werror
         >
         $<$<STREQUAL:${CMAKE_CXX_COMPILER_ID},GNU>:
                 -ffloat-store
         >
-        -mcpu=cortex-m4
-        -mthumb
-        -mfloat-abi=hard
-        -mfpu=fpv4-sp-d16
         -fsigned-char
         -ffunction-sections
         -fdata-sections
@@ -47,31 +48,14 @@ target_compile_options(${PROJECT_NAME} PRIVATE
         -Wfloat-equal
 )
 
+target_compile_options(${PROJECT_NAME} PRIVATE 
+    ${TARGET_SPECIFIC_FLAGS}
+    ${COMMON_FLAGS}    
+)
+
 target_link_options(${PROJECT_NAME} PRIVATE
-        $<$<CONFIG:Debug>:
-                -O0
-                -g
-        >
-        $<$<CONFIG:Release>:
-                -Os
-                -Werror
-        >
-        $<$<STREQUAL:${CMAKE_CXX_COMPILER_ID},GNU>:
-                -ffloat-store
-        >
-        -mcpu=cortex-m4
-        -mthumb
-        -mfloat-abi=hard
-        -mfpu=fpv4-sp-d16
-        -fsigned-char
-        -ffunction-sections
-        -fdata-sections
-        -fno-common
-        -fno-omit-frame-pointer
-        -fno-strict-aliasing
-        -Wall
-        -Wextra
-        -Wfloat-equal
+    ${TARGET_SPECIFIC_FLAGS}
+    ${COMMON_FLAGS}
 )
 
 set_target_properties(
