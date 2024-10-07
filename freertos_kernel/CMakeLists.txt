@@ -24,11 +24,8 @@ set(FreeRTOS_SRC
         $<$<BOOL:${USE_STM32H5_SUPPORT}>:
             portable/GCC/ARM_CM33_NTZ/non_secure/port.c
             portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c
-
-            # Remove when integrating to RTU project
-            portable/MemMang/heap_4.c
         >
-        )
+    )
 
 add_library(${PROJECT_NAME} OBJECT ${FreeRTOS_SRC})
 
